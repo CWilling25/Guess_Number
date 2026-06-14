@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>随机数 · Python while循环</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/dracula.min.css">
+    <style>
+       /* 为编辑器区域添加淡入动画 */
+.fade-in-editor {
+    animation: fadeSlideUp 0.5s ease-out forwards;
+    opacity: 0;
+    transform: translateY(15px);
+}
+@keyframes fadeSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 提示区域：初始隐藏，通过 JS 添加 visible 类后过渡显示 */
+.hint {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+.hint.visible {
+    opacity: 1;
+}
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="progress-section">
+        <div class="progress-bar"><div class="progress-fill" style="width:40%"></div></div>
+        <div class="progress-text">2 / 5</div>
+    </div>
+    <div class="nav-bar">
+        <div class="nav-left">
+            <a href="index.html" class="icon-btn"><i class="fas fa-home"></i></a>
+            <span class="page-badge">随机数模块</span>
+        </div>
+        <div class="right-actions">
+            <div class="icon-btn" id="aiIconBtn"><i class="fas fa-robot"></i></div>
+            <div class="icon-btn" id="noteIconBtn"><i class="fas fa-book-open"></i></div>
+        </div>
+    </div>
+    <div class="view">
+        <div class="title">🎲 随机数 random</div>
+        <div class="simple-text" style="font-size: 1.3rem;">通过<code>random.randint(a, b)</code> 生成 a 到 b 之间的随机整数。</div>
+        
+        <!-- 编辑器容器将应用淡入动画 -->
+        <div id="editorContainer" class="fade-in-editor"></div>
+        
+        <div class="hint">💡 问题：只能猜一次就结束，如何重复猜？ → 需要循环结构！</div>
+        
+        <div class="page-nav">
+            <a href="scene.html" class="nav-btn"><i class="fas fa-chevron-left"></i></a>
+            <a href="while-loop.html" class="nav-btn"><i class="fas fa-chevron-right"></i></a>
+        </div>
+    </div>
+</div>
+
+<!-- 笔记模态框 -->
+<div id="notesModal" class="modal-overlay">
+    <div class="notes-board">
+        <div class="notes-header"><h3><i class="fas fa-chalkboard"></i> 学习笔记</h3><button class="close-modal" id="closeNotesBtn">&times;</button></div>
+        <div class="notes-body"><textarea id="notesContent" class="notes-textarea" placeholder="📝 记录你的学习心得、代码要点..."></textarea></div>
+        <div class="notes-footer"><button class="save-note-btn" id="saveNotesBtn"><i class="fas fa-save"></i> 保存笔记</button></div>
+    </div>
+</div>
+
+<!-- AI 助手模态框 -->
+<div id="aiModal" class="modal-overlay">
+    <div class="ai-board">
+        <div class="ai-header"><h3><i class="fas fa-brain"></i> AI 编程助手</h3><button class="close-modal" id="closeAiBtn">&times;</button></div>
+        <div class="ai-body">
+            <div id="aiResponseArea" class="ai-response-area">✨ 输入Python问题，获取智能解答～</div>
+            <textarea id="aiQuestionInput" class="ai-question-input" rows="3" placeholder="例如：while循环的break怎么用？"></textarea>
+        </div>
+        <div class="ai-footer">
+            <div class="ai-key-hint"><i class="fas fa-key"></i>DeepSeek模型</div>
+            <button id="askAiBtn" class="ask-ai-btn"><i class="fas fa-paper-plane"></i> 向AI提问</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="js/common.js"></script>
+<script src="js/python-sim.js"></script>
+<script src="js/codemirror-editor.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const code = `import random
+secret = random.randint(1, 100)
+print("猜数字游戏(单次)")
+guess = int(input("请输入你的猜测: "))
+if guess == secret:
+    print("恭喜！猜对了！")
+elif guess > secret:
+    print("猜大了")
+else:
+    print("猜小了")
+print(f"正确答案是 {secret}")`;
+    
+    const container = document.getElementById('editorContainer');
+    if (container) {
+        // 创建编辑器（原有逻辑）
+        createCodeMirrorEditor(container, code, "随机数random | Python (python3)");
+    }
+
+    // 等待编辑器生成，找到运行按钮并添加监听
+const checkInterval = setInterval(() => {
+    const runBtn = document.querySelector('.run-btn'); // 运行按钮的类名
+    if (runBtn) {
+        clearInterval(checkInterval);
+        runBtn.addEventListener('click', () => {
+            // 延迟 2 秒后显示提示（可调整时间）
+            setTimeout(() => {
+                const hint = document.querySelector('.hint');
+                if (hint) {
+                    // 确保提示可见（可以移除隐藏样式，或直接修改样式）
+                    hint.style.opacity = '1';
+                    // 也可以添加一个类
+                    // hint.classList.add('visible');
+                }
+            }, 2000);
+        });
+    }
+}, 100); // 每 100 毫秒检测一次
+});
+</script>
+<!-- 确保 CodeMirror 加载 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
+</body>
+</html>

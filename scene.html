@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>情景导入 · Python while循环</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+    /* 游戏卡片淡入动画 */
+    .fade-in-card {
+        animation: fadeSlideUp 0.5s ease-out forwards;
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    @keyframes fadeSlideUp {
+        to { opacity: 1; transform: translateY(0); }
+    }
+    /* 提示区域初始隐藏 */
+    .hint {
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+    .hint.visible {
+        opacity: 1;
+    }
+</style>
+</head>
+<body>
+<div class="app">
+    <div class="progress-section">
+        <div class="progress-bar"><div class="progress-fill" style="width:20%"></div></div>
+        <div class="progress-text">1 / 5</div>
+    </div>
+    <div class="nav-bar">
+        <div class="nav-left">
+            <a href="index.html" class="icon-btn"><i class="fas fa-home"></i></a>
+            <span class="page-badge">情景导入</span>
+        </div>
+        <div class="right-actions">
+            <div class="icon-btn" id="aiIconBtn"><i class="fas fa-robot"></i></div>
+            <div class="icon-btn" id="noteIconBtn"><i class="fas fa-book-open"></i></div>
+        </div>
+    </div>
+    <div class="view">
+        <div class="title">🎲 校园嘉年华 · 猜数字互动</div>
+        <div class="simple-text"><strong>情境：</strong> 主持人心中想一个1-100的数，参与者反复猜测直到猜中。</div>
+        
+        <!-- 互动游戏区 -->
+        <div class="game-card fade-in-card">
+            <div class="game-title">🎮 手动体验</div>
+            <div class="game-area">
+                <div class="guess-input-group">
+                    <input type="number" id="guessInput" class="guess-input" placeholder="1-100">
+                    <button id="guessBtn" class="guess-btn">猜一次</button>
+                    <button id="resetGameBtn" class="reset-game">重置</button>
+                </div>
+                <div id="gameMsgArea" class="game-message">游戏已开始！</div>
+            </div>
+        </div>
+        
+        <div class="hint">🤔 人工操作繁琐，是否可以尝试写一个程序来自动执行这个循环过程呢？</div>
+        
+        <!-- 底部导航 -->
+        <div class="page-nav">
+            <a href="index.html" class="nav-btn"><i class="fas fa-chevron-left"></i></a>
+            <a href="random.html" class="nav-btn"><i class="fas fa-chevron-right"></i></a>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框 -->
+<!-- 笔记模态框 -->
+<div id="notesModal" class="modal-overlay">
+    <div class="notes-board">
+        <div class="notes-header">
+            <h3><i class="fas fa-chalkboard"></i> 学习笔记</h3>
+            <button class="close-modal" id="closeNotesBtn">&times;</button>
+        </div>
+        <div class="notes-body">
+            <textarea id="notesContent" class="notes-textarea" placeholder="📝 记录你的学习心得、代码要点..."></textarea>
+        </div>
+        <div class="notes-footer">
+            <button class="save-note-btn" id="saveNotesBtn"><i class="fas fa-save"></i> 保存笔记</button>
+        </div>
+    </div>
+</div>
+
+<!-- AI 助手模态框 -->
+<div id="aiModal" class="modal-overlay">
+    <div class="ai-board">
+        <div class="ai-header">
+            <h3><i class="fas fa-brain"></i> AI 编程助手</h3>
+            <button class="close-modal" id="closeAiBtn">&times;</button>
+        </div>
+        <div class="ai-body">
+            <div id="aiResponseArea" class="ai-response-area">✨ 输入Python问题，获取智能解答～</div>
+            <textarea id="aiQuestionInput" class="ai-question-input" rows="3" placeholder="例如：while循环的break怎么用？"></textarea>
+        </div>
+        <div class="ai-footer">
+            <div class="ai-key-hint"><i class="fas fa-key"></i>DeepSeek模型</div>
+            <button id="askAiBtn" class="ask-ai-btn"><i class="fas fa-paper-plane"></i> 向AI提问</button>
+        </div>
+    </div>
+</div>
+<script src="js/common.js"></script>
+<script>
+// 当前页面的互动游戏逻辑
+let secretNumber = Math.floor(Math.random() * 100) + 1;
+const guessInput = document.getElementById('guessInput');
+const guessBtn = document.getElementById('guessBtn');
+const resetBtn = document.getElementById('resetGameBtn');
+const msgDiv = document.getElementById('gameMsgArea');
+
+function handleGuess() {
+    const val = parseInt(guessInput.value);
+    if (isNaN(val) || val < 1 || val > 100) {
+        msgDiv.innerHTML = "请输入1-100之间的数字";
+        return;
+    }
+    if (val === secretNumber) {
+        msgDiv.innerHTML = `🎉 猜对了！数字是 ${secretNumber} → 引出while循环！`;
+        guessBtn.disabled = true;
+    } else if (val > secretNumber) {
+        msgDiv.innerHTML = `猜大了 ${val} > 目标`;
+    } else {
+        msgDiv.innerHTML = `猜小了 ${val} < 目标`;
+    }
+    guessInput.value = '';
+}
+
+function resetGame() {
+    secretNumber = Math.floor(Math.random() * 100) + 1;
+    msgDiv.innerHTML = "新游戏！开始猜测吧";
+    guessBtn.disabled = false;
+    guessInput.value = '';
+}
+
+guessBtn.addEventListener('click', handleGuess);
+resetBtn.addEventListener('click', resetGame);
+guessInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleGuess(); });
+
+// 点击“猜一次”后延迟显示提示
+
+if (guessBtn) {
+    guessBtn.addEventListener('click', () => {
+        setTimeout(() => {
+            const hint = document.querySelector('.hint');
+            if (hint) hint.classList.add('visible');
+        }, 2000);
+    });
+}
+</script>
+</body>
+</html>

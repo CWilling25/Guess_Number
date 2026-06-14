@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Python课件：while循环 · 猜数字游戏</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* 开始按钮样式，与整体风格一致 */
+        .start-btn {
+            display: inline-block;
+            background: #2c6e9e;
+            color: white;
+            padding: 12px 32px;
+            border-radius: 40px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .start-btn:hover {
+            background: #1f5a7e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .start-btn i {
+            margin-right: 8px;
+        }
+        .btn-wrapper {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="nav-bar">
+        <div class="nav-left">
+            <span class="page-badge">📚 课程目录</span>
+        </div>
+        <div class="right-actions">
+            <div class="icon-btn" id="aiIconBtn"><i class="fas fa-robot"></i></div>
+            <div class="icon-btn" id="noteIconBtn"><i class="fas fa-book-open"></i></div>
+        </div>
+    </div>
+    <div class="view">
+        <div class="title">Python while循环 · 猜数字游戏</div>
+        
+        <div class="dir-grid">
+            <a href="scene.html" class="dir-item"><h4>🎮 情景导入</h4><p>手动猜数字互动 + 引出循环</p></a>
+            <a href="random.html" class="dir-item"><h4>🎲 随机数模块</h4><p>random.randint / 单次猜</p></a>
+            <a href="while-loop.html" class="dir-item"><h4>🔄 while循环</h4><p>语法 + break 终止</p></a>
+            <a href="game.html" class="dir-item"><h4>🎯 完整游戏</h4><p>随机数+循环整合</p></a>
+            <a href="summary.html" class="dir-item"><h4>📝 总结复盘</h4><p>易错点 + 计算思维</p></a>
+        </div>
+
+        <!-- 开始学习按钮：放在目录卡片下方 -->
+        <div class="btn-wrapper">
+            <a href="scene.html" class="start-btn"><i class="fas fa-rocket"></i> 开始学习</a>
+        </div>
+    </div>
+</div>
+
+<!-- 笔记模态框 -->
+<div id="notesModal" class="modal-overlay">
+    <div class="notes-board">
+        <div class="notes-header">
+            <h3><i class="fas fa-chalkboard"></i> 学习笔记</h3>
+            <button class="close-modal" id="closeNotesBtn">&times;</button>
+        </div>
+        <div class="notes-body">
+            <textarea id="notesContent" class="notes-textarea" placeholder="📝 记录你的学习心得、代码要点...&#10;笔记自动保存到浏览器缓存。"></textarea>
+        </div>
+        <div class="notes-footer">
+            <button class="save-note-btn" id="saveNotesBtn"><i class="fas fa-save"></i> 保存笔记</button>
+        </div>
+    </div>
+</div>
+
+<!-- AI 助手模态框 -->
+<div id="aiModal" class="modal-overlay">
+    <div class="ai-board">
+        <div class="ai-header">
+            <h3><i class="fas fa-brain"></i> AI 编程助手</h3>
+            <button class="close-modal" id="closeAiBtn">&times;</button>
+        </div>
+        <div class="ai-body">
+            <div id="aiResponseArea" class="ai-response-area">✨ 输入你的Python学习问题，点击「向AI提问」获取智能解答～</div>
+            <div class="ai-question-area">
+                <textarea id="aiQuestionInput" class="ai-question-input" rows="3" placeholder="💡 例如：while循环的break怎么用？&#10;或者：如何优化猜数字游戏的代码？&#10;或者：解释一下random模块..."></textarea>
+            </div>
+        </div>
+        <div class="ai-footer">
+            <div class="ai-key-hint"><i class="fas fa-key"></i>已对接deepseek大模型</div>
+            <button id="askAiBtn" class="ask-ai-btn"><i class="fas fa-paper-plane"></i> 向AI提问</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="js/common.js"></script>
+</body>
+</html>
