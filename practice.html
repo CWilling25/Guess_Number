@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>编程练习场 · Python while循环</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/dracula.min.css">
+    <style>
+        .fade-in-editor {
+            animation: fadeSlideUp 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        @keyframes fadeSlideUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .exercise-header {
+            background: #f0f4f9;
+            padding: 16px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .question-select {
+            margin-bottom: 12px;
+        }
+        .question-select label {
+            font-weight: bold;
+            margin-right: 12px;
+            color: #1f3b4c;
+        }
+        select {
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 1px solid #cbdde9;
+            background: white;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 300px;
+            cursor: pointer;
+        }
+        .desc-box {
+            background: #fefce8;
+            border-left: 4px solid #2c6e9e;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-top: 8px;
+            font-size: 0.95rem;
+            color: #2d3748;
+        }
+        .desc-box strong {
+            color: #2c6e9e;
+        }
+        @media (max-width: 768px) {
+            .exercise-header {
+                padding: 12px;
+            }
+            select {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="progress-section">
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+        <div class="progress-text">练习模式</div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-left">
+            <a href="index.html" class="icon-btn"><i class="fas fa-home"></i></a>
+            <span class="page-badge">🧪 编程练习场</span>
+        </div>
+        <div class="right-actions">
+            <div class="icon-btn" id="aiIconBtn"><i class="fas fa-robot"></i></div>
+            <div class="icon-btn" id="noteIconBtn"><i class="fas fa-book-open"></i></div>
+        </div>
+    </div>
+
+    <div class="view">
+        <div class="title">📝 编程练习场</div>
+
+        <div class="exercise-header">
+            <div class="question-select">
+                <label><i class="fas fa-tasks"></i> 选择题目：</label>
+                <select id="questionSelect"></select>
+            </div>
+            <div class="desc-box" id="questionDesc">
+                请从上方选择一道题目，然后在下方的编辑器中编写代码，点击「运行代码」查看结果。
+            </div>
+        </div>
+
+        <!-- 编辑器容器 -->
+        <div id="practiceEditor" class="fade-in-editor"></div>
+
+        <div class="page-nav">
+            <a href="summary.html" class="nav-btn"><i class="fas fa-chevron-left"></i></a>
+            <a href="index.html" class="nav-btn"><i class="fas fa-home"></i> 目录</a>
+        </div>
+    </div>
+</div>
+
+<!-- 模态框（笔记、AI） -->
+<div id="notesModal" class="modal-overlay">
+    <div class="notes-board">
+        <div class="notes-header"><h3><i class="fas fa-chalkboard"></i> 学习笔记</h3><button class="close-modal" id="closeNotesBtn">&times;</button></div>
+        <div class="notes-body"><textarea id="notesContent" class="notes-textarea" placeholder="📝 记录你的学习心得、代码要点..."></textarea></div>
+        <div class="notes-footer"><button class="save-note-btn" id="saveNotesBtn"><i class="fas fa-save"></i> 保存笔记</button></div>
+    </div>
+</div>
+
+<div id="aiModal" class="modal-overlay">
+    <div class="ai-board">
+        <div class="ai-header"><h3><i class="fas fa-brain"></i> AI 编程助手</h3><button class="close-modal" id="closeAiBtn">&times;</button></div>
+        <div class="ai-body">
+            <div id="aiResponseArea" class="ai-response-area">✨ 输入Python问题，获取智能解答～</div>
+            <textarea id="aiQuestionInput" class="ai-question-input" rows="3" placeholder="例如：while循环的break怎么用？"></textarea>
+        </div>
+        <div class="ai-footer">
+            <div class="ai-key-hint"><i class="fas fa-key"></i>DeepSeek模型</div>
+            <button id="askAiBtn" class="ask-ai-btn"><i class="fas fa-paper-plane"></i> 向AI提问</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
+<script src="js/python-sim.js"></script>
+<script src="js/codemirror-editor.js"></script>
+<script src="js/common.js"></script>
+<!-- 引入题库数据（全局变量 QUESTION_DATA） -->
+<script src="js/questions.js"></script>
+
+<script>
+let currentEditor = null;
+let questions = [];
+
+function loadQuestions() {
+    // 直接使用全局变量 QUESTION_DATA
+    if (typeof QUESTION_DATA !== 'undefined') {
+        questions = QUESTION_DATA;
+        const select = document.getElementById('questionSelect');
+        select.innerHTML = '';
+        questions.forEach((q, idx) => {
+            const option = document.createElement('option');
+            option.value = idx;
+            option.textContent = q.title;
+            select.appendChild(option);
+        });
+        if (questions.length) {
+            loadQuestion(0);
+        } else {
+            document.getElementById('questionDesc').innerHTML = '⚠️ 题库为空。';
+        }
+        select.addEventListener('change', (e) => loadQuestion(parseInt(e.target.value)));
+    } else {
+        document.getElementById('questionDesc').innerHTML = '❌ 题库加载失败：未找到 QUESTION_DATA 变量，请确保 questions.js 已正确引入。';
+    }
+}
+
+function loadQuestion(index) {
+    const q = questions[index];
+    if (!q) return;
+    document.getElementById('questionDesc').innerHTML = `<strong>📖 题目描述：</strong><br>${q.description}`;
+    if (currentEditor) {
+        currentEditor.setValue("# 请在这里开始你的创意吧~");
+        currentEditor.answerCode = q.initialCode;
+    } else {
+        const container = document.getElementById('practiceEditor');
+        if (container) {
+            currentEditor = createCodeMirrorEditor(container, "# 请在这里开始你的创意吧~", "✏️ 在这里编写你的代码，然后点击下方【运行代码】测试", q.initialCode);
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadQuestions);
+</script>
+</body>
+</html>
