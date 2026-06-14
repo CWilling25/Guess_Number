@@ -3,6 +3,8 @@ class CodeMirrorEditor {
     constructor(container, initialCode, options = {}) {
         this.container = container;
         this.initialCode = initialCode;
+        this.answerCode = options.answerCode || null;   // 新增：答案代码（可选）
+        this.hasRun = false;                            // 新增：是否运行过
         this.options = {
             lineNumbers: true,
             mode: 'python',
@@ -57,6 +59,24 @@ class CodeMirrorEditor {
         bar.appendChild(runBtn);
         bar.appendChild(resetBtn);
         bar.appendChild(copyBtn);
+        
+        // 仅当提供了 answerCode 时才添加“答案”按钮
+        if (this.answerCode) {
+            const answerBtn = document.createElement('button');
+            answerBtn.innerHTML = '<i class="fas fa-lightbulb"></i> 答案';
+            answerBtn.style.cssText = 'background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 6px 20px; border-radius: 30px; cursor: pointer; font-size: 13px;';
+            bar.appendChild(answerBtn);
+            
+            answerBtn.onclick = () => {
+                if (this.hasRun) {
+                    this.editor.setValue(this.answerCode);
+                    this.showToast('✅ 答案已填入编辑器');
+                } else {
+                    this.showToast('💡 试试看再看答案嘛');
+                }
+            };
+        }
+        
         bar.appendChild(hintSpan);
         
         // 创建输出框
@@ -90,6 +110,7 @@ class CodeMirrorEditor {
     }
     
     async runCode() {
+        this.hasRun = true;   // 标记已经运行过
         const code = this.editor.getValue();
         this.outputDiv.innerHTML = ">> 运行中 ...\n";
         try {
@@ -103,6 +124,7 @@ class CodeMirrorEditor {
     resetCode() {
         this.editor.setValue(this.initialCode);
         this.outputDiv.textContent = '[已重置] 代码已恢复初始状态。';
+        // 注意：重置后不清除 hasRun 标记，保持运行状态（可选）
     }
     
     async copyCode() {
@@ -141,8 +163,8 @@ class CodeMirrorEditor {
     }
 }
 
-// 全局函数：创建编辑器
-function createCodeMirrorEditor(container, initialCode, hintText = '') {
+// 全局函数：创建编辑器（支持第四个参数 answerCode，可选）
+function createCodeMirrorEditor(container, initialCode, hintText = '', answerCode = null) {
     if (!container) return null;
     
     // 清空容器
@@ -154,13 +176,12 @@ function createCodeMirrorEditor(container, initialCode, hintText = '') {
         return null;
     }
     
-    return new CodeMirrorEditor(container, initialCode, { hintText });
+    return new CodeMirrorEditor(container, initialCode, { hintText, answerCode });
 }
 
-// 兼容旧函数名
+// 兼容旧函数名（注意：旧函数不支持 answerCode）
 window.createHighlighterEditor = function(initialCode, hintText) {
     const container = document.createElement('div');
-    // 延迟创建，等待 DOM 准备
     setTimeout(() => {
         createCodeMirrorEditor(container, initialCode, hintText);
     }, 0);
