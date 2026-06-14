@@ -543,3 +543,101 @@ body {
         padding: 18px;
     }
 }
+
+/* 移动端自适应 */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    .app {
+        border-radius: 16px;
+        margin: 0;
+    }
+    .view {
+        padding: 16px;
+    }
+    .title {
+        font-size: 1.3rem;
+        padding-left: 12px;
+        margin-bottom: 16px;
+    }
+    .simple-text, .simple-text code {
+        font-size: 1rem !important;
+    }
+    .code-card {
+        margin: 16px 0;
+    }
+    .code-editor-wrapper, .code-textarea, .highlight-pre {
+        min-height: 250px;
+    }
+    .CodeMirror {
+        font-size: 14px; /* 移动端编辑器字体稍小 */
+    }
+    .output-box {
+        font-size: 12px;
+        padding: 10px 12px;
+        margin: 0 12px 12px 12px;
+        max-height: 200px;
+    }
+    .dir-grid {
+        grid-template-columns: 1fr; /* 目录卡片改为单列 */
+        gap: 12px;
+    }
+    .dir-item {
+        padding: 14px 10px;
+    }
+    .game-card {
+        padding: 16px;
+        margin: 16px 0;
+    }
+    .guess-input-group {
+        flex-direction: column;
+    }
+    .guess-input, .guess-btn, .reset-game {
+        width: 100%;
+        text-align: center;
+    }
+    .page-nav {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    .nav-btn {
+        text-align: center;
+    }
+    .notes-board, .ai-board {
+        width: 95vw;
+        max-width: 95vw;
+    }
+    .notes-textarea {
+        height: 200px;
+        font-size: 13px;
+    }
+    .ai-response-area {
+        max-height: 180px;
+        font-size: 0.8rem;
+    }
+    .action-bar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .run-btn, .reset-btn, .copy-btn {
+        padding: 4px 16px;
+        font-size: 12px;
+    }
+    .hint {
+        font-size: 0.85rem;
+        padding: 8px 12px;
+    }
+    .progress-text {
+        font-size: 10px;
+    }
+    .nav-bar {
+        padding: 8px 16px;
+    }
+    .icon-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+}
