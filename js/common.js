@@ -1,3 +1,31 @@
+// 加载 Markdown 解析库 marked
+let markedReady = null;
+function loadMarked() {
+    if (typeof marked !== 'undefined') return Promise.resolve();
+    if (markedReady) return markedReady;
+    markedReady = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+        script.onload = () => {
+            if (typeof marked !== 'undefined') {
+                // 配置 marked，支持代码高亮
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        if (lang && hljs.getLanguage(lang)) {
+                            return hljs.highlight(code, { language: lang }).value;
+                        }
+                        return hljs.highlightAuto(code).value;
+                    }
+                });
+            }
+            resolve();
+        };
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+    return markedReady;
+}
+
 // 笔记功能
 const NOTES_KEY = "python_course_notes";
 
@@ -56,7 +84,17 @@ async function askAI() {
         });
         const json = await res.json();
         const answer = json?.choices?.[0]?.message?.content || "无法获取回答";
-        responseDiv.innerHTML = `<i class="fas fa-graduation-cap" style="margin-right:6px;"></i> ${answer.replace(/\n/g, '<br>')}`;
+// 等待 marked 加载完成
+await loadMarked();
+// 将 Markdown 渲染为 HTML
+const html = marked.parse(answer);
+responseDiv.innerHTML = `<i class="fas fa-graduation-cap" style="margin-right:6px;"></i> ${html}`;
+// 高亮代码块
+if (typeof hljs !== 'undefined') {
+    responseDiv.querySelectorAll('pre code').forEach(block => {
+        hljs.highlightElement(block);
+    });
+}
     } catch (err) {
         responseDiv.innerHTML = `❌ 请求失败: ${err.message}`;
     }
